@@ -40,11 +40,32 @@ details{background:var(--card);border:1px solid var(--sage);border-radius:14px;p
 summary{cursor:pointer;font-weight:600;color:var(--ink)}
 details p{margin:10px 0 0}
 .last{text-align:center}
+#bar{position:fixed;top:env(safe-area-inset-top,0px);left:0;height:4px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:0 50%;z-index:50}
+section:first-of-type{position:relative;overflow:hidden}
+.w{position:relative;z-index:1}
+.rv{opacity:0;transform:translateY(30px);transition:opacity .9s ease,transform .9s ease;transition-delay:var(--d,0s)}
+.rv.in{opacity:1;transform:none}
+li.rv{transform:translateX(-24px)}li.rv.in{transform:none}
+.author img.rv{transform:scale(.92) rotate(-2deg)}.author img.rv.in{transform:none}
+.float{animation:float 6s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-10px)}}
+.sun{transform-box:fill-box;transform-origin:center;animation:breathe 4s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.18);opacity:1}}
+.halo{transform-box:fill-box;transform-origin:center;animation:halo 4s ease-in-out infinite}
+@keyframes halo{0%,100%{transform:scale(.9);opacity:.15}50%{transform:scale(1.5);opacity:.35}}
+.btn{animation:pulse 2.8s ease-out infinite;transition:transform .25s}
+.btn:hover{transform:translateY(-3px) scale(1.03)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--gold) 60%,transparent)}70%,100%{box-shadow:0 0 0 18px transparent}}
+.price.in{animation:pop .8s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.leaf{position:absolute;top:-30px;width:22px;height:22px;opacity:.55;z-index:0;animation:fall linear infinite;pointer-events:none}
+@keyframes fall{to{transform:translate(60px,110vh) rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
 footer{text-align:center;font-size:14px;padding:30px 22px;opacity:.8}
-</style></head><body>
+</style></head><body><div id="bar"></div>
 
 <section><div class="w">
-<svg class="arch" viewBox="0 0 200 220" aria-hidden="true"><path d="M20 210V95a80 80 0 0 1 160 0v115z" fill="#FAF0E4" stroke="#4F5B35" stroke-width="9"/><circle cx="100" cy="100" r="22" fill="#B98A3A" opacity=".9"/><path d="M25 205v-45c30-22 60-20 75-12 20-12 55-12 75 12v45z" fill="#AEB488"/><path d="M100 205l-22-52h44z" fill="#D9C485"/><circle cx="55" cy="170" r="13" fill="#4F5B35"/><circle cx="148" cy="170" r="13" fill="#4F5B35"/></svg>
+<svg class="arch float" viewBox="0 0 200 220" aria-hidden="true"><path d="M20 210V95a80 80 0 0 1 160 0v115z" fill="#FAF0E4" stroke="#4F5B35" stroke-width="9"/><circle class="halo" cx="100" cy="100" r="30" fill="#D9C485"/><circle class="sun" cx="100" cy="100" r="22" fill="#B98A3A" opacity=".9"/><path d="M25 205v-45c30-22 60-20 75-12 20-12 55-12 75 12v45z" fill="#AEB488"/><path d="M100 205l-22-52h44z" fill="#D9C485"/><circle cx="55" cy="170" r="13" fill="#4F5B35"/><circle cx="148" cy="170" r="13" fill="#4F5B35"/></svg>
 <div class="rule"></div>
 <h1>O relacionamento acabou. Mas você continua aqui, e é por você que esta jornada começa.</h1>
 <p class="sub">Você não precisa esquecer tudo à força. Existe um caminho, passo a passo, para voltar a si mesmo, mesmo com a saudade ainda aí.</p>
@@ -136,4 +157,24 @@ footer{text-align:center;font-size:14px;padding:30px 22px;opacity:.8}
 <p class="small">Garantia de 7 dias · Acesso imediato</p>
 </div></section>
 <footer>© Leandro D’Oliveira. Este e-book é um recurso educativo de autoconhecimento e não substitui acompanhamento profissional.</footer>
+<script>
+(function(){
+try{
+var sel='h1,h2,h3,.sub,.w>p,li,.step,details,.quote,.offer,.guar,.author img,.btn,.small,.price,.old';
+var els=document.querySelectorAll(sel);
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.15,rootMargin:'0px 0px -6% 0px'});
+els.forEach(function(el){
+var sibs=Array.prototype.filter.call(el.parentNode.children,function(c){return c.tagName===el.tagName});
+el.style.setProperty('--d',(Math.min(sibs.indexOf(el),6)*0.09)+'s');
+el.classList.add('rv');io.observe(el)});
+var hero=document.querySelector('section');
+var leaf='<svg viewBox="0 0 24 24"><path d="M4 20C4 9 11 4 20 4c0 9-5 16-16 16z" fill="#AEB488"/></svg>';
+for(var i=0;i<7;i++){var s=document.createElement('span');s.className='leaf';s.innerHTML=leaf;
+s.style.left=(Math.random()*90)+'%';s.style.animationDuration=(14+Math.random()*10)+'s';s.style.animationDelay=(-Math.random()*20)+'s';hero.appendChild(s)}
+var bar=document.getElementById('bar'),t=false;
+function up(){var h=document.documentElement.scrollHeight-innerHeight;bar.style.transform='scaleX('+(h>0?Math.min(scrollY/h,1):0)+')';t=false}
+addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(up)}},{passive:true});up();
+}catch(e){document.querySelectorAll('.rv').forEach(function(x){x.classList.add('in')})}
+})();
+</script>
 </body></html>
